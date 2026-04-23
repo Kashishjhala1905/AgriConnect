@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order History</title>
+
+<style>
+body { font-family: Arial; background: #f4f6f8; margin: 0; }
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    background: #1e6091;
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    font-size: 16px;
+}
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+}
+.navbar a:hover { text-decoration: underline; }
+
+/* Top Buttons */
+.top-buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+}
+.back-btn, .home-btn {
+    background: #1e6091;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.3s;
+}
+.back-btn:hover, .home-btn:hover { background: #184e77; }
+
+/* Original Styles */
+header, footer { background: #1e6091; color: white; text-align: center; padding: 15px; }
+table {
+    width: 90%;
+    margin: 30px auto;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+}
+th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+th { background: #1e6091; color: white; }
+tr:hover { background: #f0f0f0; }
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+<div class="top-buttons">
+    <button class="back-btn" onclick="window.history.back();">← Back</button>
+    <button class="home-btn" onclick="location.href='../index.html';">Home →</button>
+</div>
+
+    <a href="consumerDashboard.html">Home</a>
+    <a href="browseProducts.html">Browse Products</a>
+    <a href="rentInstruments.html">Rent Instruments</a>
+    <a href="orders.html">My Orders</a>
+    <a href="consumerProfile.html">Profile</a>
+    <a href="../login.html">Logout</a>
+</div>
+
+<header><h1>My Orders</h1></header>
+
+<table>
+<thead>
+<tr>
+    <th>Order ID</th>
+    <th>Product</th>
+    <th>Qty</th>
+    <th>Amount (₹)</th>
+    <th>Status</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+    <td>201</td>
+    <td>Wheat</td>
+    <td>10</td>
+    <td>400</td>
+    <td>Delivered</td>
+</tr>
+</tbody>
+</table>
+
+<div style="text-align:center;">
+    <button onclick="window.location.href='consumerDashboard.html'">⬅️ Back</button>
+</div>
+
+<footer>&copy; 2025 Farmer-Consumer Connect | Developed by Kuldeep</footer>
+
+</body>
+</html>

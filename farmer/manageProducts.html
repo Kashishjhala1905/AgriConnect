@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Manage Products</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar (farmer theme) */
+.navbar {
+  width: 100%;
+  background: #2b9348;
+  color: white;
+  padding: 12px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.left-nav { display:flex; gap:10px; }
+.nav-btn { background:white; color:#2b9348; padding:6px 12px; border-radius:5px; border:none; font-weight:bold; cursor:pointer;}
+.nav-btn:hover{ background:#d9f5df;}
+.center-links { flex:1; display:flex; justify-content:center; gap:25px;}
+.center-links a { color:white; text-decoration:none; font-size:16px; font-weight:500;}
+.center-links a:hover{ text-decoration:underline; }
+
+header { background:#2b9348; color:white; text-align:center; padding:15px; }
+
+/* Product grid */
+.product-container {
+  max-width:1200px;
+  margin:30px auto;
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap:20px;
+  padding: 10px;
+}
+.card {
+  background:white;
+  border-radius:12px;
+  box-shadow:0 3px 10px rgba(0,0,0,0.12);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  transition:0.25s;
+}
+.card:hover { transform: translateY(-8px); box-shadow:0 12px 25px rgba(0,0,0,0.18); }
+.card-img { width:100%; height:170px; object-fit:cover; display:block; }
+.card-body { padding:14px; flex:1; display:flex; flex-direction:column; }
+.card h3 { margin:0 0 8px 0; color:#2b9348; }
+.info { color:#333; margin:4px 0; font-size:14px; }
+.btn-group { display:flex; gap:8px; margin-top:auto; justify-content:center; padding-bottom:12px; }
+.edit-btn { background:#55a630; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;}
+.delete-btn { background:#d00000; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;}
+.empty { text-align:center; color:#666; padding:40px 0; }
+
+/* footer sticky */
+footer { background:#2b9348; color:white; text-align:center; padding:12px; margin-top:auto; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="left-nav">
+    <button class="nav-btn" onclick="window.history.back();">← Back</button>
+    <button class="nav-btn" onclick="location.href='../index.html';">Home</button>
+  </div>
+  <div class="center-links">
+    <a href="farmerDashboard.html">Home</a>
+    <a href="addProduct.html">Add Product</a>
+    <a href="manageProducts.html">Manage Products</a>
+    <a href="rentInstrument.html">Rent Instruments</a>
+    <a href="viewOrders.html">View Orders</a>
+    <a href="../login.html">Logout</a>
+  </div>
+</div>
+
+<header><h1>Manage Products</h1></header>
+
+<div class="product-container" id="productContainer">
+  <!-- cards will be inserted here by JS -->
+</div>
+
+<footer>&copy; 2025 Farmer-Consumer Connect | Developed by Kuldeep</footer>
+
+<script>
+const STORAGE_KEY = 'fc_products';
+const container = document.getElementById('productContainer');
+
+function readProducts() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error(e);
+    return [];
+  }
+}
+
+function render() {
+  const list = readProducts();
+  container.innerHTML = '';
+  if (!list.length) {
+    container.innerHTML = '<div class="empty">No products yet. Add some from Add Product page.</div>';
+    return;
+  }
+
+  list.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'card';
+
+    const img = document.createElement('img');
+    img.className = 'card-img';
+    img.src = p.imgDataUrl || 'https://i.imgur.com/2l9KQ7Q.jpg';
+    img.alt = p.name;
+
+    const body = document.createElement('div');
+    body.className = 'card-body';
+
+    const title = document.createElement('h3');
+    title.textContent = p.name;
+
+    const cat = document.createElement('div');
+    cat.className = 'info';
+    cat.textContent = 'Category: ' + (p.category || 'N/A');
+
+    const price = document.createElement('div');
+    price.className = 'info';
+    price.textContent = 'Price: ₹' + (p.price || '0') + '/kg';
+
+    const qty = document.createElement('div');
+    qty.className = 'info';
+    qty.textContent = 'Quantity: ' + (p.quantity || '0') + ' kg';
+
+    const btns = document.createElement('div');
+    btns.className = 'btn-group';
+
+    const edit = document.createElement('button');
+    edit.className = 'edit-btn';
+    edit.textContent = 'Edit';
+    edit.onclick = ()=> { // navigate to addProduct with editId
+      location.href = 'addProduct.html?editId=' + encodeURIComponent(p.id);
+    };
+
+    const del = document.createElement('button');
+    del.className = 'delete-btn';
+    del.textContent = 'Delete';
+    del.onclick = ()=>{
+      if (!confirm('Delete "'+p.name+'"?')) return;
+      const newList = readProducts().filter(x => String(x.id) !== String(p.id));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newList));
+      render();
+    };
+
+    btns.appendChild(edit);
+    btns.appendChild(del);
+
+    body.appendChild(title);
+    body.appendChild(cat);
+    body.appendChild(price);
+    body.appendChild(qty);
+    body.appendChild(btns);
+
+    card.appendChild(img);
+    card.appendChild(body);
+    container.appendChild(card);
+  });
+}
+
+/* initial render */
+render();
+
+/* keep in sync if other tab changes storage */
+window.addEventListener('storage', ()=> render());
+</script>
+
+</body>
+</html>

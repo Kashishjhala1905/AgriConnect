@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>View Orders</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; }
+    header, footer { background: #2b9348; color: white; text-align: center; padding: 15px; }
+    table {
+        width: 90%; margin: 30px auto; border-collapse: collapse;
+        background: white; border-radius: 10px;
+    }
+    th, td {
+        padding: 12px; text-align: center; border-bottom: 1px solid #ddd;
+    }
+    th { background: #55a630; color: white; }
+    tr:hover { background: #f0f0f0; }
+    button {
+        background: #55a630; color: white; border: none;
+        padding: 8px 12px; border-radius: 6px; cursor: pointer;
+    }
+    button:hover { background: #40916c; }
+</style>
+</head>
+<body>
+
+<header><h1>View Orders</h1></header>
+
+<table>
+    <thead>
+        <tr>
+            <th>Order ID</th><th>Product</th><th>Quantity</th><th>Amount (₹)</th><th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>101</td><td>Wheat</td><td>20 kg</td><td>600</td><td>Delivered</td>
+        </tr>
+    </tbody>
+</table>
+
+<div style="text-align:center;">
+    <button onclick="window.location.href='farmerDashboard.html'">Back to Dashboard</button>
+</div>
+
+<footer>&copy; 2025 Farmer-Consumer Connect | Developed by Kuldeep</footer>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Farmer Connect | Register</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(rgba(46,125,50,0.85), rgba(76,175,80,0.85)), 
+                        url('images/farm-bg.jpg') no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 18px;
+            box-shadow: 0px 10px 35px rgba(0,0,0,0.4);
+            width: 420px;
+            text-align: center;
+            animation: slideUp 0.8s ease-in-out;
+        }
+        @keyframes slideUp {
+            from {opacity: 0; transform: translateY(30px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        h2 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+            font-size: 26px;
+        }
+        .input-box {
+            position: relative;
+            margin: 12px 0;
+        }
+        .input-box input, .input-box select {
+            width: 90%;
+            padding: 12px 40px 12px 15px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+        .input-box input:focus, .input-box select:focus {
+            border-color: #2e7d32;
+            box-shadow: 0px 0px 8px rgba(46,125,50,0.5);
+        }
+        button {
+            background: linear-gradient(90deg, #2e7d32, #81c784);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #1b5e20, #4caf50);
+            transform: scale(1.05);
+        }
+        .link {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .link a {
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .link a:hover {
+            text-decoration: underline;
+        }
+        .extra {
+            display: none;
+        }
+        .message {
+            color: green;
+            margin-bottom: 10px;
+        }
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <script>
+        function toggleExtraFields() {
+            let role = document.getElementById("role").value;
+            let extra = document.getElementById("extraFields");
+            extra.style.display = (role === "farmer") ? "block" : "none";
+        }
+
+        // Show messages based on URL parameter
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const status = params.get("status");
+            if (status === "success") {
+                document.getElementById("successMsg").style.display = "block";
+            } else if (status === "failed" || status === "sqlError") {
+                document.getElementById("errorMsg").style.display = "block";
+            }
+        };
+    </script>
+</head>
+
+<body>
+    <div class="container">
+            <h2>Create Account 🌱</h2>
+
+        <p class="message" id="successMsg" style="display:none;">Registration successful!</p>
+        <p class="error" id="errorMsg" style="display:none;">Error: Please try again.</p>
+
+        <form action="registerServlet" method="post">
+            <div class="input-box">
+                <input type="text" name="name" placeholder="Full Name" required>
+            </div>
+            <div class="input-box">
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="input-box">
+                <input type="text" name="contact" placeholder="Contact Number" pattern="[0-9]{10}" required>
+            </div>
+            <div class="input-box">
+                <input type="password" name="password" placeholder="Password" required>
+            </div>
+            <div class="input-box">
+                <input type="text" name="address" placeholder="Address" required>
+            </div>
+            <div class="input-box">
+                <select name="role" id="role" onchange="toggleExtraFields()" required>
+                    <option value="">-- Select Role --</option>
+                    <option value="farmer">🌾 Farmer</option>
+                    <option value="consumer">🛒 Consumer</option>
+                </select>
+            </div>
+            <div class="input-box extra" id="extraFields">
+                <input type="text" name="land_size" placeholder="Land Size (e.g., 2 acres)">
+            </div>
+            <button type="submit">Register Now</button>
+        </form>
+
+        <div class="link">
+            Already have an account? <a href="login.html">Login Here</a>
+        </div>
+    </div>
+</body>
+</html>

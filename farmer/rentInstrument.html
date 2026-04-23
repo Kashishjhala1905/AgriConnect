@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Rent Instruments</title>
+<style>
+/* Farmer theme + layout (matches other farmer pages) */
+body { font-family: Arial, sans-serif; background:#f4f6f8; margin:0; min-height:100vh; display:flex; flex-direction:column; }
+.navbar { width:100%; background:#2b9348; color:white; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; }
+.left-nav{display:flex; gap:10px;}
+.nav-btn{ background:white; color:#2b9348; padding:6px 12px; border-radius:5px; border:none; font-weight:bold; cursor:pointer; }
+.center-links{ flex:1; display:flex; justify-content:center; gap:25px; }
+.center-links a{ color:white; text-decoration:none; font-size:16px; font-weight:500; }
+.center-links a:hover{ text-decoration:underline; }
+header, footer { background:#2b9348; color:white; text-align:center; padding:15px; }
+.container { max-width:700px; margin:30px auto; background:white; padding:26px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.08); }
+label{font-weight:600; display:block; margin-top:10px;}
+input[type="text"], input[type="number"], textarea { width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:6px; }
+.row{display:flex; gap:10px; flex-wrap:wrap;}
+.col{flex:1; min-width:140px;}
+.preview{ margin-top:10px; max-width:280px; border-radius:8px; display:block; }
+.actions{ display:flex; gap:12px; margin-top:14px; align-items:center; }
+.btn{ background:#55a630; color:white; border:none; padding:12px 18px; border-radius:8px; cursor:pointer; }
+.btn.secondary{ background:#ccc; color:#111; }
+.note{ color:#666; margin-top:8px; display:block;}
+footer{ margin-top:auto; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="left-nav">
+    <button class="nav-btn" onclick="window.history.back();">← Back</button>
+    <button class="nav-btn" onclick="location.href='../index.html';">Home</button>
+  </div>
+
+  <div class="center-links">
+    <a href="farmerDashboard.html">Dashboard</a>
+    <a href="addProduct.html">Add Product</a>
+    <a href="manageProducts.html">Manage Products</a>
+    <a href="rentInstrument.html">Rent Instruments</a>
+    <a href="manageInstruments.html">Manage Instruments</a>
+    <a href="../login.html">Logout</a>
+  </div>
+</div>
+
+<header><h1 id="pageTitle">Rent Instruments</h1></header>
+
+<div class="container">
+  <form id="instrumentForm">
+    <!-- hidden id for edit -->
+    <input type="hidden" id="instrumentId" value="">
+
+    <label for="iname">Instrument Name</label>
+    <input id="iname" type="text" required>
+
+    <div class="row">
+      <div class="col">
+        <label for="rentDay">Cost per Day (₹)</label>
+        <input id="rentDay" type="number" min="0" required>
+      </div>
+      <div class="col">
+        <label for="rentHour">Cost per Hour (₹)</label>
+        <input id="rentHour" type="number" min="0" required>
+      </div>
+    </div>
+
+    <label for="days">Availability (Days)</label>
+    <input id="days" type="number" min="0" required>
+
+    <label for="desc">Description</label>
+    <textarea id="desc" rows="3"></textarea>
+
+    <label for="imgInput">Image (URL or upload)</label>
+    <input id="imgInput" type="text" placeholder="Paste image URL (or leave blank to upload below)">
+
+    <label for="fileInput">Or choose an image file (recommended &lt; 300KB)</label>
+    <input id="fileInput" type="file" accept="image/*">
+
+    <img id="imgPreview" class="preview" src="" alt="" style="display:none;">
+
+    <span class="note">Images saved as data URLs (LocalStorage). Large images can use a lot of space.</span>
+
+    <div class="actions">
+      <button type="submit" class="btn" id="saveBtn">Save Instrument</button>
+      <button type="button" class="btn secondary" id="clearBtn">Clear</button>
+      <span id="message" style="margin-left:10px;"></span>
+    </div>
+  </form>
+</div>
+
+<footer>&copy; 2025 Farmer-Consumer Connect | Developed by Kuldeep</footer>
+
+<script>
+/*
+LocalStorage key: "instruments"
+Instrument object: { id: number, name, rentDay, rentHour, days, desc, img }
+Static instruments (consumer) are separate and have ids like "static-1"
+*/
+
+// helpers
+function readInstruments(){ try { return JSON.parse(localStorage.getItem('instruments'))||[] } catch(e){return []}}
+function writeInstruments(list){ localStorage.setItem('instruments', JSON.stringify(list))}
+
+// image handling: file input -> dataURL preview
+const fileInput = document.getElementById('fileInput');
+const imgInput = document.getElementById('imgInput');
+const imgPreview = document.getElementById('imgPreview');
+fileInput.addEventListener('change', (e)=>{
+  const f = e.target.files[0];
+  if (!f) { return; }
+  const reader = new FileReader();
+  reader.onload = ()=> {
+    imgPreview.src = reader.result;
+    imgPreview.style.display = 'block';
+    // if no URL present, set imgInput to dataURL (so we save whichever)
+    imgInput.value = '';
+    imgPreview.dataset.durl = reader.result;
+  }
+  reader.readAsDataURL(f);
+});
+
+// if URL pasted, show preview
+imgInput.addEventListener('input', (e)=>{
+  const v = e.target.value.trim();
+  if (!v) { imgPreview.style.display='none'; imgPreview.src=''; delete imgPreview.dataset.durl; return; }
+  imgPreview.src = v;
+  imgPreview.style.display = 'block';
+  delete imgPreview.dataset.durl;
+});
+
+// handle edit prefill if manage page set editInstrumentId in localStorage
+function populateEditIfAny(){
+  const editId = localStorage.getItem('editInstrumentId');
+  if(!editId) return;
+  const list = readInstruments();
+  const idx = list.findIndex(x => String(x.id) === String(editId));
+  if(idx === -1) { localStorage.removeItem('editInstrumentId'); return; }
+  const p = list[idx];
+  document.getElementById('instrumentId').value = p.id;
+  document.getElementById('iname').value = p.name;
+  document.getElementById('rentDay').value = p.rentDay;
+  document.getElementById('rentHour').value = p.rentHour;
+  document.getElementById('days').value = p.days;
+  document.getElementById('desc').value = p.desc || '';
+  if(p.img){
+    imgPreview.src = p.img;
+    imgPreview.style.display = 'block';
+    imgPreview.dataset.durl = p.img;
+  }
+  document.getElementById('pageTitle').textContent = 'Edit Instrument';
+  // remove the flag so next time not auto-edit
+  localStorage.removeItem('editInstrumentId');
+}
+populateEditIfAny();
+
+// clear form
+document.getElementById('clearBtn').addEventListener('click', ()=>{
+  document.getElementById('instrumentForm').reset();
+  document.getElementById('instrumentId').value = '';
+  imgPreview.style.display = 'none';
+  imgPreview.src = '';
+  delete imgPreview.dataset.durl;
+  document.getElementById('message').textContent = '';
+  document.getElementById('pageTitle').textContent = 'Rent Instruments';
+});
+
+// submit (create or update)
+document.getElementById('instrumentForm').addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const idVal = document.getElementById('instrumentId').value;
+  const name = document.getElementById('iname').value.trim();
+  const rentDay = document.getElementById('rentDay').value;
+  const rentHour = document.getElementById('rentHour').value;
+  const days = document.getElementById('days').value;
+  const desc = document.getElementById('desc').value.trim();
+  // choose image: prefer dataURL from file preview, else url input, else placeholder
+  let img = imgPreview.dataset.durl || document.getElementById('imgInput').value.trim() || 'https://via.placeholder.com/400x250?text=Instrument';
+  let list = readInstruments();
+
+  if(idVal){
+    // update
+    const idx = list.findIndex(x=>String(x.id)===String(idVal));
+    if(idx !== -1){
+      list[idx].name = name;
+      list[idx].rentDay = rentDay;
+      list[idx].rentHour = rentHour;
+      list[idx].days = days;
+      list[idx].desc = desc;
+      list[idx].img = img;
+      writeInstruments(list);
+      document.getElementById('message').textContent = 'Updated ✓';
+      setTimeout(()=>{ window.location.href='manageInstruments.html'; },700);
+      return;
+    }
+  }
+  // create new
+  const newItem = { id: Date.now(), name, rentDay, rentHour, days, desc, img };
+  list.unshift(newItem);
+  writeInstruments(list);
+  document.getElementById('message').textContent = 'Saved ✓';
+  setTimeout(()=>{ window.location.href='manageInstruments.html'; },700);
+});
+</script>
+
+</body>
+</html>

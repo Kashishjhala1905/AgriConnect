@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Details</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f6f8;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    background: #1e6091;
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    position: relative;
+}
+.navbar a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+}
+.navbar a:hover { text-decoration: underline; }
+
+/* Back & Home Buttons inside navbar */
+.top-buttons {
+    position: absolute;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+    top: 12px;
+}
+.back-btn, .home-btn {
+    background: white;
+    color: #1e6091;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.back-btn:hover, .home-btn:hover { background: #dff1ff; }
+
+/* Content Area */
+header {
+    background: #1e6091;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+.container {
+    max-width: 850px;
+    margin: 40px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 30px;
+}
+
+.product-img {
+    width: 350px;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.details h2 {
+    margin-top: 0;
+    color: #1e6091;
+}
+
+.details p { font-size: 16px; }
+
+button {
+    background: #1e6091;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 15px;
+}
+button:hover { background: #184e77; }
+
+/* Footer */
+footer {
+    background: #1e6091;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    margin-top: auto;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+
+    <div class="top-buttons">
+        <button class="back-btn" onclick="window.history.back();">← Back</button>
+        <button class="home-btn" onclick="location.href='../index.html';">Home</button>
+    </div>
+
+    <a href="consumerDashboard.html">Home</a>
+    <a href="browseProducts.html">Browse Products</a>
+    <a href="rentInstruments.html">Rent Instruments</a>
+    <a href="orders.html">My Orders</a>
+    <a href="consumerProfile.html">Profile</a>
+    <a href="../login.html">Logout</a>
+</div>
+
+<header><h1>Product Details</h1></header>
+
+<div class="container">
+
+    <img id="prodImg" class="product-img" src="" alt="Product Image">
+
+    <div class="details">
+        <h2 id="prodName">Product Name</h2>
+
+        <p><b>Category:</b> <span id="prodCat"></span></p>
+        <p><b>Price:</b> ₹<span id="prodPrice"></span></p>
+        <p><b>Available Quantity:</b> <span id="prodQty"></span> kg</p>
+        <p><b>Farmer:</b> <span id="prodFarmer"></span></p>
+
+        <p><b>Description:</b></p>
+        <p id="prodDesc"></p>
+
+        <button onclick="orderNow()">Buy Now</button>
+    </div>
+
+</div>
+
+<footer>&copy; 2025 Farmer-Consumer Connect | Developed by Kuldeep</footer>
+
+<script>
+// Fetch values from URL parameters
+const p = new URLSearchParams(window.location.search);
+
+document.getElementById("prodImg").src = p.get("img");
+document.getElementById("prodName").textContent = p.get("name");
+document.getElementById("prodCat").textContent = p.get("category");
+document.getElementById("prodPrice").textContent = p.get("price");
+document.getElementById("prodQty").textContent = p.get("qty");
+document.getElementById("prodFarmer").textContent = p.get("farmer");
+document.getElementById("prodDesc").textContent = p.get("desc");
+
+function orderNow() {
+    alert("Order placed successfully!");
+}
+</script>
+
+</body>
+</html>

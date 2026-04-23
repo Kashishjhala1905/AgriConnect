@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Manage Instruments</title>
+<style>
+body{font-family:Arial;background:#f4f6f8;margin:0;min-height:100vh;display:flex;flex-direction:column}
+.navbar{width:100%;background:#2b9348;color:white;padding:12px 20px;display:flex;align-items:center;justify-content:space-between}
+.left-nav{display:flex;gap:10px}
+.nav-btn{background:white;color:#2b9348;padding:6px 12px;border-radius:5px;border:none;font-weight:bold;cursor:pointer}
+.center-links{flex:1;display:flex;justify-content:center;gap:25px}
+.center-links a{color:white;text-decoration:none;font-size:16px;font-weight:500}
+header{background:#2b9348;color:white;text-align:center;padding:15px}
+.instrument-container{max-width:1200px;margin:30px auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:30px;padding:10px}
+.card{background:white;border-radius:12px;padding:20px;text-align:center;box-shadow:0 5px 12px rgba(0,0,0,0.15);transition:0.3s}
+.card:hover{transform:translateY(-8px);box-shadow:0 12px 25px rgba(0,0,0,0.25)}
+.card img{width:100%;height:180px;object-fit:cover;border-radius:8px}
+.card h3{margin:12px 0 8px;color:#2b9348}
+.card p{font-size:15px;margin:4px 0}
+.btn-group{margin-top:12px;display:flex;justify-content:center;gap:10px}
+.edit-btn,.delete-btn{padding:8px 12px;border:none;border-radius:6px;cursor:pointer;font-weight:bold}
+.edit-btn{background:#55a630;color:white}
+.delete-btn{background:#d00000;color:white}
+footer{background:#2b9348;color:white;text-align:center;padding:12px;margin-top:auto}
+.empty{ text-align:center;color:#555; padding:40px 0; }
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="left-nav">
+    <button class="nav-btn" onclick="window.history.back();">← Back</button>
+    <button class="nav-btn" onclick="location.href='../index.html';">Home</button>
+  </div>
+  <div class="center-links">
+    <a href="farmerDashboard.html">Dashboard</a>
+    <a href="addProduct.html">Add Product</a>
+    <a href="manageProducts.html">Manage Products</a>
+    <a href="rentInstrument.html">Rent Instruments</a>
+    <a href="manageInstruments.html">Manage Instruments</a>
+    <a href="../login.html">Logout</a>
+  </div>
+</div>
+
+<header><h1>Manage Instruments</h1></header>
+
+<div class="instrument-container" id="instrumentContainer"></div>
+
+<footer>&copy; 2025 Farmer-Consumer Connect | Developed by Kuldeep</footer>
+
+<script>
+function readInstruments(){ try{return JSON.parse(localStorage.getItem('instruments'))||[]}catch(e){return []}}
+function writeInstruments(list){ localStorage.setItem('instruments', JSON.stringify(list))}
+
+function render(){
+  const container = document.getElementById('instrumentContainer');
+  const list = readInstruments();
+  container.innerHTML = '';
+  if(!list.length){ container.innerHTML = '<div class="empty">No instruments added yet. Add via "Rent Instruments".</div>'; return; }
+  list.forEach(it=>{
+    const card = document.createElement('div'); card.className='card';
+    card.innerHTML = `
+      <img src="${it.img || 'https://via.placeholder.com/400x250?text=Instrument'}" alt="${it.name}">
+      <h3>${it.name}</h3>
+      <p><b>₹${it.rentDay}/day</b></p>
+      <p><b>₹${it.rentHour}/hour</b></p>
+      <p><b>Available:</b> ${it.days} days</p>
+      <div class="btn-group">
+        <button class="edit-btn">Edit</button>
+        <button class="delete-btn">Delete</button>
+      </div>
+    `;
+    const editBtn = card.querySelector('.edit-btn');
+    const delBtn = card.querySelector('.delete-btn');
+    editBtn.onclick = ()=>{ localStorage.setItem('editInstrumentId', it.id); window.location.href='rentInstrument.html'; };
+    delBtn.onclick = ()=>{ if(confirm('Delete "'+it.name+'"?')){ const newList = readInstruments().filter(x=>x.id!==it.id); writeInstruments(newList); render(); } };
+    container.appendChild(card);
+  });
+}
+render();
+window.addEventListener('storage', render);
+</script>
+
+</body>
+</html>

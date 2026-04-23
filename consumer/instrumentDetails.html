@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instrument Details</title>
+
+  <style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ORIGINAL NAVBAR STYLE (AS REQUESTED) */
+.navbar-custom {
+    width: 100%;
+    background: #1e6091;
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    font-size: 16px;
+}
+.navbar-custom a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+}
+.navbar-custom a:hover { text-decoration: underline; }
+
+/* Top Buttons */
+.top-buttons {
+    position: absolute;
+    left: 20px;
+    display: flex;
+    gap: 10px;
+    top: 12px;
+}
+.back-btn, .home-btn {
+    background: white;
+    color: #1e6091;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.back-btn:hover, .home-btn:hover { background: #dff1ff; }
+
+/* Details Box */
+.details-container {
+    max-width: 1000px;
+    background: white;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.2);
+    display: flex;
+    gap: 40px;
+}
+
+.instrument-img {
+    width: 350px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.details h2 {
+    margin-top: 0;
+    color: #1e6091;
+}
+
+.details p {
+    font-size: 16px;
+    margin: 8px 0;
+}
+
+.details button {
+    margin-top: 15px;
+    background: #1e6091;
+    color: white;
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.details button:hover {
+    background: #184e77;
+}
+
+/* Sticky Footer */
+footer {
+    background: #1e6091;
+    color: white;
+    text-align: center;
+    padding: 12px;
+    margin-top: auto;
+}
+  </style>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar-custom">
+
+    <div class="top-buttons">
+        <button class="back-btn" onclick="window.history.back();">← Back</button>
+        <button class="home-btn" onclick="location.href='../index.html';">Home</button>
+    </div>
+
+    <a href="consumerDashboard.html">Home</a>
+    <a href="browseProducts.html">Browse Products</a>
+    <a href="rentInstruments.html">Rent Instruments</a>
+    <a href="orders.html">My Orders</a>
+    <a href="consumerProfile.html">Profile</a>
+    <a href="../login.html">Logout</a>
+</div>
+
+<!-- DETAILS CONTENT -->
+<div class="details-container">
+
+    <img id="instImg" class="instrument-img" src="" alt="Instrument">
+
+    <div class="details">
+        <h2 id="instName">Instrument Name</h2>
+
+        <p><b>Rent Price:</b> ₹<span id="instPrice"></span> / day</p>
+        <p><b>Available Days:</b> <span id="instDays"></span></p>
+
+        <p><b>Description:</b></p>
+        <p id="instDesc"></p>
+
+        <button>Request Rent</button>
+    </div>
+
+</div>
+
+<footer>&copy; 2025 Farmer-Consumer Connect | Developed by Kuldeep</footer>
+
+
+<script>
+// Load values from URL
+const p = new URLSearchParams(window.location.search);
+
+// Default values (if user opens page directly)
+const defaultData = {
+    img: "https://i.imgur.com/ZxLwX7P.jpg",
+    name: "Tractor",
+    price: "1000",
+    days: "5",
+    desc: "High-power tractor suitable for agricultural field work."
+};
+
+// Use values from URL OR fallback defaults
+document.getElementById("instImg").src = p.get("img") || defaultData.img;
+document.getElementById("instName").textContent = p.get("name") || defaultData.name;
+document.getElementById("instPrice").textContent = p.get("price") || defaultData.price;
+document.getElementById("instDays").textContent = p.get("days") || defaultData.days;
+document.getElementById("instDesc").textContent = p.get("desc") || defaultData.desc;
+
+</script>
+
+</body>
+</html>

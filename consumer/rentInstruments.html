@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rent Instruments</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f6f8;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Navbar */
+.navbar {
+    width: 100%;
+    background: #1e6091;
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.left-nav {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-btn {
+    background: white;
+    color: #1e6091;
+    padding: 6px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+.nav-btn:hover { background: #dff1ff; }
+
+.center-links {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+}
+.center-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+.center-links a:hover { text-decoration: underline; }
+
+/* Page Header */
+header {
+    background: #1e6091;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+footer {
+    background: #1e6091;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    margin-top: auto;
+}
+
+/* Container + Grid */
+.container {
+    max-width: 1400px;
+    margin: 40px auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 35px;
+}
+
+/* Card */
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    text-align: center;
+    transition: 0.3s ease;
+    width: 100%;
+    margin: 5px;
+}
+
+.card:hover {
+    transform: translateY(-10px) scale(1.05);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.22);
+}
+
+.card img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+/* Buttons */
+button {
+    background: #1e6091;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+button:hover { background: #184e77; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 600px) {
+    .grid { grid-template-columns: repeat(1, 1fr); }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="left-nav">
+        <button class="nav-btn" onclick="window.history.back();">← Back</button>
+        <button class="nav-btn" onclick="location.href='../index.html';">Home</button>
+    </div>
+
+    <div class="center-links">
+        <a href="consumerDashboard.html">Home</a>
+        <a href="browseProducts.html">Browse Products</a>
+        <a href="rentInstruments.html">Rent Instruments</a>
+        <a href="orders.html">My Orders</a>
+        <a href="consumerProfile.html">Profile</a>
+        <a href="../login.html">Logout</a>
+    </div>
+</div>
+
+<header><h1>Available Instruments for Rent</h1></header>
+
+<div class="container">
+    <div class="grid">
+
+        <!-- INSTRUMENT CARDS (10 items) -->
+        <div class="card">
+            <img src="https://i.imgur.com/ZxLwX7P.jpg">
+            <h3>Tractor</h3>
+            <p><b>₹1000/day</b></p>
+            <p>Available for 5 days</p>
+            <button onclick="location.href='instrumentDetails.html'">Rent Now</button>
+        </div>
+
+        <div class="card">
+            <img src="https://i.imgur.com/p6O4azR.jpg">
+            <h3>Power Tiller</h3>
+            <p><b>₹650/day</b></p>
+            <p>Available for 7 days</p>
+            <button onclick="location.href='instrumentDetails.html'">Rent Now</button>
+        </div>
+
+        <div class="card">
+            <img src="https://i.imgur.com/XhNqcib.jpg">
+            <h3>Seed Drill Machine</h3>
+            <p><b>₹500/day</b></p>
+            <p>Available for 4 days</p>
+            <button onclick="location.href='instrumentDetails.html'">Rent Now</button>
+        </div>
+
+        <div class="card">
+            <img src="https://i.imgur.com/kJbGF1l.jpg">
+            <h3>Sprayer Pump</h3>
+            <p><b>₹150/day</b></p>
+            <p>Available for 10 days</p>
+            <button onclick="location.href='instrumentDetails.html'">Rent Now</button>
+        </div>
+
+        <div class="card">
+            <img src="https://i.imgur.com/gSVxk8R.jpg">
+            <h3>Rotavator</h3>
+            <p><b>₹900/day</b></p>
+            <p>Available for 3 days</p>
+            <button onclick="location.href='instrumentDetails.html'">Rent Now</button>
+        </div>
+
+        <div class="card">
+            <img src="https://i.imgur.com/o9Y2V7U.jpg">
+            <h3>Plough</h3>
+            <p><b>₹300/day</b></p>
+            <p>Available for 8 days</p>
+            <button onclick="location.href='instrumentDetails.html'">Rent Now</button>
+        </div>
+
+        <div class="card">
+            <img src="https://i.imgur.com/9Yd0G6X.jpg">
+            <h3>Harvester</h3>
+            <p><b>₹1500/day</b></p>
+            <p>Available for 2 days</p>
+            <button onclick="location.href='instrumentDetails.html'">Rent Now</button>
+        </div>
+
+        <div class="card">
+            <img src="https://i.imgur.com/HRpGUfF.jpg">
+            <h3>Cultivator</h3>
+            <p><b>₹500/day</b></p>
+            <p>Available for 6 days</p>
+            <button onclick="location.href='instrumentDetails.html'">Rent Now</button>
+        </div>
+
+        <div class="card">
+            <img src="https://i.imgur.com/HmAw2Ss.jpg">
+            <h3>Water Pump</h3>
+            <p><b>₹200/day</b></p>
+            <p>Available for 12 days</p>
+            <button onclick="location.href='instrumentDetails.html'">Rent Now</button>
+        </div>
+
+        <div class="card">
+            <img src="https://i.imgur.com/7tqjVHQ.jpg">
+            <h3>Thresher</h3>
+            <p><b>₹800/day</b></p>
+            <p>Available for 4 days</p>
+            <button onclick="location.href='instrumentDetails.html'">Rent Now</button>
+        </div>
+
+    </div>
+</div>
+
+<footer>&copy; 2025 Farmer-Consumer Connect | Developed by Kuldeep</footer>
+
+</body>
+</html>

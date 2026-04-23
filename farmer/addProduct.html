@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Add Product</title>
+<style>
+/* Page styles consistent with farmer theme */
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f8;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar (farmer theme) */
+.navbar {
+  width: 100%;
+  background: #2b9348;
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.left-nav { display:flex; gap:10px; }
+.nav-btn {
+  background: white; color: #2b9348; padding:6px 12px; border-radius:5px;
+  border: none; font-weight: bold; cursor:pointer;
+}
+.nav-btn:hover{ background:#d9f5df; }
+.center-links {
+  flex:1; display:flex; justify-content:center; gap:25px;
+}
+.center-links a { color:white; text-decoration:none; font-size:16px; font-weight:500;}
+.center-links a:hover { text-decoration: underline; }
+
+header { background:#2b9348; color:white; text-align:center; padding:15px; }
+
+/* Form container */
+.container {
+  max-width: 700px;
+  margin: 30px auto;
+  background: white;
+  padding: 26px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+.row { display:flex; gap:12px; flex-wrap:wrap; }
+.col { flex:1; min-width:160px; }
+
+label { display:block; margin-top:10px; font-weight:600; color:#333;}
+input[type="text"], input[type="number"], textarea, select {
+  width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:6px;
+}
+input[type="file"] { margin-top:8px; }
+.small { max-width:180px; }
+
+.actions { display:flex; gap:12px; margin-top:16px; align-items:center; }
+.btn {
+  background:#55a630; color:white; border:none; padding:12px 18px; border-radius:8px; cursor:pointer;
+}
+.btn.secondary { background:#ccc; color:#111; }
+.btn.danger { background:#d00000; }
+
+/* Preview image */
+.preview { margin-top:10px; max-width: 220px; border-radius:8px; }
+
+/* Footer sticky */
+footer { background:#2b9348; color:white; text-align:center; padding:12px; margin-top:auto; }
+small.note { color:#666; display:block; margin-top:8px; }
+
+.success { color:green; margin-top:8px; }
+.error { color:#c00; margin-top:8px; }
+
+/* Responsive */
+@media (max-width:600px){
+  .container { margin: 16px; padding:18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="left-nav">
+    <button class="nav-btn" onclick="window.history.back();">← Back</button>
+    <button class="nav-btn" onclick="location.href='../index.html';">Home</button>
+  </div>
+
+  <div class="center-links">
+    <a href="farmerDashboard.html">Home</a>
+    <a href="addProduct.html">Add Product</a>
+    <a href="manageProducts.html">Manage Products</a>
+    <a href="rentInstrument.html">Rent Instruments</a>
+    <a href="viewOrders.html">View Orders</a>
+    <a href="../login.html">Logout</a>
+  </div>
+</div>
+
+<header><h1>Add / Edit Product</h1></header>
+
+<div class="container">
+  <form id="productForm">
+    <input type="hidden" id="productId" value=""> <!-- used for edit -->
+
+    <label for="pname">Product Name</label>
+    <input id="pname" name="pname" type="text" required>
+
+    <label for="category">Category</label>
+    <select id="category" name="category" required>
+      <option value="Vegetables">Vegetables</option>
+      <option value="Fruits">Fruits</option>
+      <option value="Grains">Grains</option>
+      <option value="Others">Others</option>
+    </select>
+
+    <div class="row">
+      <div class="col">
+        <label for="quantity">Quantity (kg)</label>
+        <input id="quantity" name="quantity" type="number" min="0" step="1" required>
+      </div>
+      <div class="col">
+        <label for="price">Price (₹ per kg)</label>
+        <input id="price" name="price" type="number" min="0" step="0.01" required>
+      </div>
+    </div>
+
+    <label for="desc">Description</label>
+    <textarea id="desc" name="desc" rows="4"></textarea>
+
+    <label for="image">Product Image (optional, best < 300 KB)</label>
+    <input id="image" name="image" type="file" accept="image/*">
+    <img id="imgPreview" class="preview" src="" alt="" style="display:none;">
+
+    <small class="note">Images are stored in your browser (LocalStorage). Large images may be truncated by the browser.</small>
+
+    <div class="actions">
+      <button type="submit" class="btn" id="saveBtn">Save Product</button>
+      <button type="button" class="btn secondary" id="clearForm">Clear</button>
+      <span id="msg" aria-live="polite"></span>
+    </div>
+  </form>
+</div>
+
+<footer>&copy; 2025 Farmer-Consumer Connect | Developed by Kuldeep</footer>
+
+<script>
+/*
+LocalStorage product structure:
+localStorage['fc_products'] = JSON.stringify([{id, name, category, quantity, price, desc, imgDataUrl } , ...])
+*/
+
+const STORAGE_KEY = 'fc_products';
+const form = document.getElementById('productForm');
+const imageInput = document.getElementById('image');
+const imgPreview = document.getElementById('imgPreview');
+const msg = document.getElementById('msg');
+const productIdInput = document.getElementById('productId');
+
+function readProducts() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch (e) {
+    console.error('readProducts error', e);
+    return [];
+  }
+}
+function writeProducts(list) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+}
+
+/* Image preview on select */
+imageInput.addEventListener('change', (ev)=>{
+  const f = ev.target.files && ev.target.files[0];
+  if (!f) {
+    imgPreview.style.display='none';
+    imgPreview.src='';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    imgPreview.src = reader.result;
+    imgPreview.style.display = 'block';
+  };
+  reader.readAsDataURL(f);
+});
+
+/* Populate form when editing (data passed via query param e.g. ?editId=123) */
+function populateIfEdit() {
+  const params = new URLSearchParams(window.location.search);
+  const editId = params.get('editId');
+  if (!editId) return;
+  const list = readProducts();
+  const p = list.find(x => String(x.id) === String(editId));
+  if (!p) return;
+  productIdInput.value = p.id;
+  document.getElementById('pname').value = p.name;
+  document.getElementById('category').value = p.category;
+  document.getElementById('quantity').value = p.quantity;
+  document.getElementById('price').value = p.price;
+  document.getElementById('desc').value = p.desc || '';
+  if (p.imgDataUrl) {
+    imgPreview.src = p.imgDataUrl;
+    imgPreview.style.display = 'block';
+  }
+}
+
+populateIfEdit();
+
+/* Save product (create or update) */
+form.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  msg.textContent = '';
+  const name = document.getElementById('pname').value.trim();
+  const category = document.getElementById('category').value;
+  const quantity = Number(document.getElementById('quantity').value);
+  const price = Number(document.getElementById('price').value);
+  const desc = document.getElementById('desc').value.trim();
+  const idVal = productIdInput.value;
+
+  // read image file if selected
+  const file = imageInput.files && imageInput.files[0];
+
+  function finishSave(imgDataUrl) {
+    const list = readProducts();
+    if (idVal) {
+      // update existing
+      const idx = list.findIndex(x=>String(x.id)===String(idVal));
+      if (idx !== -1) {
+        list[idx].name = name;
+        list[idx].category = category;
+        list[idx].quantity = quantity;
+        list[idx].price = price;
+        list[idx].desc = desc;
+        if (imgDataUrl) list[idx].imgDataUrl = imgDataUrl;
+        writeProducts(list);
+        msg.innerHTML = '<span class="success">Product updated.</span>';
+        // go to manage page after small delay
+        setTimeout(()=>{ location.href='manageProducts.html'; },900);
+        return;
+      }
+    }
+    // create new
+    const id = Date.now(); // simple id
+    const item = { id, name, category, quantity, price, desc, imgDataUrl: imgDataUrl || '' };
+    list.unshift(item);
+    writeProducts(list);
+    msg.innerHTML = '<span class="success">Product added.</span>';
+    setTimeout(()=>{ location.href='manageProducts.html'; },900);
+  }
+
+  if (file) {
+    // read file as DataURL then save
+    const reader = new FileReader();
+    reader.onload = ()=> {
+      finishSave(reader.result);
+    };
+    reader.onerror = ()=> {
+      msg.innerHTML = '<span class="error">Image load failed — product not saved.</span>';
+    };
+    reader.readAsDataURL(file);
+  } else {
+    // if editing and no new image chosen, keep existing image (handled in finishSave)
+    // we attempt to find existing image if editing
+    if (idVal) {
+      const list = readProducts();
+      const existing = list.find(x=>String(x.id)===String(idVal));
+      finishSave(existing ? existing.imgDataUrl : '');
+    } else {
+      finishSave('');
+    }
+  }
+});
+
+/* Clear form */
+document.getElementById('clearForm').addEventListener('click', ()=>{
+  form.reset();
+  productIdInput.value = '';
+  imgPreview.style.display = 'none';
+  imgPreview.src = '';
+  msg.textContent = '';
+});
+</script>
+
+</body>
+</html>

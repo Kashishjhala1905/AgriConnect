@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Instrument Details</title>
+<style>
+body{font-family:Arial;background:#f4f6f8;margin:0;min-height:100vh;display:flex;flex-direction:column}
+.navbar{width:100%;background:#1e6091;color:white;padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:25px}
+.top-buttons{position:absolute;left:20px;display:flex;gap:10px;top:12px}
+.back-btn,.home-btn{background:white;color:#1e6091;border:none;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:bold}
+.details-container{max-width:1000px;background:white;margin:40px auto;padding:30px;border-radius:12px;box-shadow:0 3px 15px rgba(0,0,0,0.12);display:flex;gap:40px}
+.instrument-img{width:420px;height:280px;object-fit:cover;border-radius:10px}
+.details h2{margin-top:0;color:#1e6091}
+.details p{font-size:16px;margin:6px 0}
+.details button{margin-top:15px;background:#1e6091;color:white;padding:10px 18px;border:none;border-radius:8px;cursor:pointer}
+footer{background:#1e6091;color:white;text-align:center;padding:12px;margin-top:auto}
+.empty{padding:30px;text-align:center;color:#666}
+</style>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="top-buttons">
+    <button class="back-btn" onclick="window.history.back();">← Back</button>
+    <button class="home-btn" onclick="location.href='index.html';">Home</button>
+  </div>
+
+  <a href="consumerDashboard.html">Home</a>
+  <a href="browseProducts.html">Browse Products</a>
+  <a href="rentInstruments.html">Rent Instruments</a>
+  <a href="orders.html">My Orders</a>
+  <a href="consumerProfile.html">Profile</a>
+  <a href="login.html">Logout</a>
+</div>
+
+<div id="main" class="details-container" style="display:none;">
+  <img id="instImg" class="instrument-img" src="" alt="Instrument Image">
+  <div class="details">
+    <h2 id="instName">Instrument Name</h2>
+    <p><b>Rent Price:</b> ₹<span id="instPriceDay"></span> / day</p>
+    <p><b>Rent Price:</b> ₹<span id="instPriceHour"></span> / hour</p>
+    <p><b>Available:</b> <span id="instDays"></span> days</p>
+    <p><b>Description:</b></p>
+    <p id="instDesc"></p>
+    <button id="rentBtn">Request Rent</button>
+  </div>
+</div>
+
+<div id="empty" class="empty" style="display:none;">Instrument not found.</div>
+
+<footer>&copy; 2025 Farmer-Consumer Connect | Developed by Kuldeep</footer>
+
+<script>
+const STATIC_IMAGE_UPLOADED_PATH = '/mnt/data/A_flat-style_digital_illustration_promotes_a_"Farm.png';
+// same static list as in consumer page
+const staticInstruments = [
+  { id:'static-1', name:'Tractor', rentDay:1000, rentHour:80, days:5, desc:'Heavy-duty tractor.', img:STATIC_IMAGE_UPLOADED_PATH },
+  { id:'static-2', name:'Power Tiller', rentDay:650, rentHour:60, days:7, desc:'Versatile power tiller.', img:'https://i.imgur.com/p6O4azR.jpg' },
+  { id:'static-3', name:'Seed Drill', rentDay:500, rentHour:45, days:4, desc:'Precision seed drill.', img:'https://i.imgur.com/XhNqcib.jpg' },
+  { id:'static-4', name:'Sprayer Pump', rentDay:150, rentHour:15, days:10, desc:'High-pressure sprayer.', img:'https://i.imgur.com/kJbGF1l.jpg' },
+  { id:'static-5', name:'Rotavator', rentDay:900, rentHour:80, days:3, desc:'Powerful rotavator.', img:'https://i.imgur.com/gSVxk8R.jpg' },
+  { id:'static-6', name:'Plough', rentDay:300, rentHour:25, days:8, desc:'Durable plough.', img:'https://i.imgur.com/o9Y2V7U.jpg' },
+  { id:'static-7', name:'Harvester', rentDay:1500, rentHour:120, days:2, desc:'Efficient harvester.', img:'https://i.imgur.com/9Yd0G6X.jpg' },
+  { id:'static-8', name:'Cultivator', rentDay:500, rentHour:40, days:6, desc:'Reliable cultivator.', img:'https://i.imgur.com/HRpGUfF.jpg' },
+  { id:'static-9', name:'Water Pump', rentDay:200, rentHour:18, days:12, desc:'Portable water pump.', img:'https://i.imgur.com/HmAw2Ss.jpg' },
+  { id:'static-10', name:'Thresher', rentDay:800, rentHour:70, days:4, desc:'Efficient thresher.', img:'https://i.imgur.com/7tqjVHQ.jpg' }
+];
+
+function readLocal(){ try{return JSON.parse(localStorage.getItem('instruments'))||[]}catch(e){return []} }
+
+function findById(id){
+  // check local instruments (id numeric)
+  const local = readLocal();
+  const foundLocal = local.find(x => String(x.id) === String(id));
+  if(foundLocal) return foundLocal;
+  // else check static
+  return staticInstruments.find(x => String(x.id) === String(id));
+}
+
+function showInstrument(it){
+  if(!it){ document.getElementById('main').style.display='none'; document.getElementById('empty').style.display='block'; return; }
+  document.getElementById('instImg').src = it.img || 'https://via.placeholder.com/420x280?text=Instrument';
+  document.getElementById('instName').textContent = it.name || 'Instrument';
+  document.getElementById('instPriceDay').textContent = it.rentDay || (it.price||'0');
+  document.getElementById('instPriceHour').textContent = it.rentHour || '';
+  document.getElementById('instDays').textContent = it.days || 'N/A';
+  document.getElementById('instDesc').textContent = it.desc || '';
+  document.getElementById('main').style.display='flex';
+  document.getElementById('empty').style.display='none';
+  document.getElementById('rentBtn').onclick = ()=> { alert('Rent request sent for ' + it.name); };
+}
+
+(function(){
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id');
+  if(!id){ document.getElementById('main').style.display='none'; document.getElementById('empty').style.display='block'; return; }
+  const instrument = findById(id);
+  showInstrument(instrument);
+})();
+</script>
+
+</body>
+</html>
